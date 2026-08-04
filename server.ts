@@ -83,6 +83,9 @@ import { retrieveBasket } from './routes/basket'
 import { searchProducts } from './routes/search'
 import { trackOrder } from './routes/trackOrder'
 import { getOrderById } from './routes/orderById'
+import { getOrderByQueryId } from './routes/orderByQueryId'
+import { getAllOrdersUnfiltered } from './routes/allOrdersUnfiltered'
+import { getAddressByIdInsecure } from './routes/addressByIdInsecure'
 import { saveLoginIp } from './routes/saveLoginIp'
 import { serveKeyFiles } from './routes/keyServer'
 import * as basketItems from './routes/basketItems'
@@ -617,6 +620,9 @@ function configureApp (app: ReturnType<typeof express>, seq: typeof sequelize) {
   app.get('/rest/image-captcha', utils.asyncHandler(imageCaptchas()))
   app.get('/rest/track-order/:id', trackOrder())
   app.get('/rest/order/:id', utils.asyncHandler(getOrderById())) // DEMO: intentionally missing ownership check (BOLA/IDOR) — see routes/orderById.ts
+  app.get('/rest/order-lookup', utils.asyncHandler(getOrderByQueryId())) // IDOR TEST T2: query-param variant — see routes/orderByQueryId.ts
+  app.get('/rest/orders/all', utils.asyncHandler(getAllOrdersUnfiltered())) // IDOR TEST T4: unfiltered list variant — see routes/allOrdersUnfiltered.ts
+  app.get('/rest/address-lookup/:id', getAddressByIdInsecure()) // IDOR TEST T1-ORM: Sequelize variant — see routes/addressByIdInsecure.ts
   app.get('/rest/country-mapping', utils.asyncHandler(countryMapping()))
   app.get('/rest/saveLoginIp', utils.asyncHandler(saveLoginIp()))
   app.post('/rest/user/data-export', security.appendUserId(), utils.asyncHandler(verifyImageCaptcha()))
